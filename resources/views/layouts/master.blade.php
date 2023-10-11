@@ -36,7 +36,7 @@
 </head>
 
 <body class="animsition">
-    <div class="page-wrapper">
+    <div class="page-wrapper" style="height:1000px">
         <div class="page-content--bge5">
             <div class="container">
                 <div class="login-wrap">
