@@ -33,7 +33,48 @@ class DatabaseSeeder extends Seeder
             'phone'=>'09426979396',
             'address'=>'yangon',
             'role'=>'admin',
+            'image'=>'6528fa06a40f0image8.jpg',
             'password'=>Hash::make('admin123')
+        ]);
+        User::create([
+            'name'=>'Admin1',
+            'email'=>'Admin1@gmail.com',
+            'gender'=>'male',
+            'phone'=>'09426979396',
+            'address'=>'yangon',
+            'image'=>'6528eda8693d5image6.jpg',
+            'role'=>'admin',
+            'password'=>Hash::make('admin1123')
+        ]);
+        User::create([
+            'name'=>'Admin2',
+            'email'=>'Admin2@gmail.com',
+            'gender'=>'male',
+            'phone'=>'09426979396',
+            'address'=>'yangon',
+            'image'=>'6528edd3c1c89image9.jpg',
+            'role'=>'admin',
+            'password'=>Hash::make('admin2123')
+        ]);
+        User::create([
+            'name'=>'Admin3',
+            'email'=>'Admin3@gmail.com',
+            'gender'=>'female',
+            'phone'=>'09426979396',
+            'address'=>'yangon',
+            'image'=>'65291a7293626image4.jpg',
+            'role'=>'admin',
+            'password'=>Hash::make('admin3123')
+        ]);
+        User::create([
+            'name'=>'Admin4',
+            'email'=>'Admin4@gmail.com',
+            'gender'=>'female',
+            'phone'=>'09426979396',
+            'address'=>'yangon',
+            'image'=>'6528f9c719a7bimage2.jpg',
+            'role'=>'admin',
+            'password'=>Hash::make('admin4123')
         ]);
 
         User::create([
@@ -76,5 +117,6 @@ class DatabaseSeeder extends Seeder
         Category::create([
             'name'=>'Indonesian Pizza'
         ]);
+        
     }
 }

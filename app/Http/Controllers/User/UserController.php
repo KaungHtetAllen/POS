@@ -1,29 +1,67 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use Carbon\Carbon;
+use App\Models\Cart;
 use App\Models\User;
+use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class AdminController extends Controller
+class UserController extends Controller
 {
-    //direct account profile page
-    public function account(){
-        return view('admin.account.profile');
+    //direct home page
+    public function home(){
+        $products = Product::orderBy('created_at','desc')->get();
+        $categories = Category::paginate(5);
+        $carts = Cart::where('user_id', Auth::user()->id)->get();
+        return view('user.main.home',compact('products','categories','carts'));
     }
 
-    //direct account profile edit page
-    public function edit(){
-        return view('admin.account.edit');
+    //direct filter home page
+    public function filter($categoryId){
+        $products = Product::where('category_id',$categoryId)->orderBy('created_at','desc')->get();
+        $carts = Cart::where('user_id', Auth::user()->id)->get();
+        $categories = Category::paginate(5);
+        return view('user.main.home',compact('products','categories','carts'));
     }
 
-    //direct update profile
-    public function update(Request $request, $id){
+
+    //direct pizza details
+    public function pizzaDetails($pizzaId){
+        $pizza = Product::where('id', $pizzaId)->first();
+        $products = Product::get();
+        return view('user.main.details',compact('pizza','products'));
+    }
+
+    //direct cart list page
+    public function cartList(){
+        $cartList = Cart::select('carts.*','products.name as pizza_name','products.price as pizza_price','products.image')
+                    ->leftJoin('products','carts.product_id','products.id')
+                    ->where('carts.user_id', Auth::user()->id)->get();
+        // dd($carts->toArray());
+
+        $totalPrice = 0;
+        foreach ($cartList as $c) {
+            $totalPrice += $c->pizza_price * $c->quantity;
+
+        }
+        return view('user.main.cart',compact('cartList','totalPrice'));
+    }
+
+    //account profile
+    public function changeAccountPage(){
+        return view('user.profile.account');
+    }
+
+    //direct account change
+    public function changeAccount($id,Request $request){
         $this->accountValidationCheck($request);
         $data = $this->getUserData($request);
 
@@ -43,9 +81,8 @@ class AdminController extends Controller
         }
 
         User::where('id', $id)->update($data);
-        return redirect()->route('admin#account')->with(['updateSuccess' => 'Profile Updated!']);
+        return redirect()->route('user#home')->with(['updateSuccess' => 'Profile Updated!']);
     }
-
 
     //account validation
     private function accountValidationCheck($request){
@@ -58,6 +95,7 @@ class AdminController extends Controller
             'image'=>['mimes:jpg,png,jpeg|file']
         ])->validate();
     }
+
     //get user data function
     private function getUserData($request){
         return [
@@ -66,56 +104,17 @@ class AdminController extends Controller
             'gender' => $request->gender,
             'phone' => $request->phone,
             'address' => $request->address,
-            'image'=>$request->image,
             'updated_at'=>Carbon::now()
         ];
     }
-
-
-    //admin list page
-    public function list(){
-        $admins = User::when(request('key'), function ($query) {
-            $query->where('name', 'like', '%' . request('key') . '%');
-        })
-                        ->where('role', 'admin')->paginate(3);
-        return view('admin.account.list',compact('admins'));
-    }
-
-    //delete admin
-    public function delete($id){
-        User::where('id', $id)->delete();
-        return redirect()->route('admin#list')->with(['deleteSuccess'=>'Admin Account Deleted!']);
-    }
-
-    //direct change role page
-    public function changeRolePage($id){
-        $account = User::where('id', $id)->first();
-        return view('admin.account.changeRole',compact('account'));
-    }
-
-    //direct change role
-    public function changeRole($id,Request $request){
-        $data = $this->requestUserData($request);
-        User::where('id', $id)->update($data);
-        return redirect()->route('admin#list')->with(['updateSuccess' => "Role Changed!"]);
-    }
-
-    //
-    private function requestUserData($request){
-        return [
-            'role' => $request->role
-        ];
-    }
-
-
-     //direct admin password page
+    //direct change password page
     public function changePasswordPage(){
-        return view('admin.account.changePassword');
+        return view('user.password.change');
     }
 
-    //direct admin change password
+    //direct change password
     public function changePassword(Request $request){
-        $this->passwordValidationCheck($request);
+         $this->passwordValidationCheck($request);
 
         $user = User::where('id', Auth::user()->id)->first();
         $dbPassword = $user->password;
@@ -125,13 +124,10 @@ class AdminController extends Controller
                 'password' => Hash::make($request->newPassword)
             ]);
 
-            return redirect()->route('category#list')->with(['changePasswordSuccess'=>'Password Changed!']);
+            return redirect()->route('user#home')->with(['changePasswordSuccess'=>'Password Changed!']);
         }
         return back()->with(['notMatch' => "Your old password is wrong! Please check again!"]);
-
     }
-
-
 
 
 
@@ -143,5 +139,4 @@ class AdminController extends Controller
             'confirmPassword' => 'required | min:6 | same:newPassword'
         ])->validate();
     }
-
 }

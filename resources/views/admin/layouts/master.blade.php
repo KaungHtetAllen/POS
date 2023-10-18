@@ -55,16 +55,12 @@
                     <ul class="list-unstyled navbar__list">
                         <li class="active has-sub">
                             <a class="js-arrow" href="{{ route('category#list')}}">
-                                <i class="fas fa-tachometer-alt"></i>Home Page
+                                <i class="fas fa-tachometer-alt"></i>Category
                             </a>
                         </li>
                         <li>
-                            <a href="#">
-                                <i class="fas fa-chart-bar"></i>Category</a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-chart-bar"></i>Customers</a>
+                            <a href="{{ route('products#list')}}">
+                            <i class="fa-solid fa-pizza-slice"></i>Products</a>
                         </li>
                     </ul>
                 </nav>
@@ -158,6 +154,12 @@
                                                 <div class="account-dropdown__item">
                                                     <a href="{{ route('admin#account')}}">
                                                     <i class="fa-solid fa-user"></i>  Account</a>
+                                                </div>
+                                            </div>
+                                            <div class="account-dropdown__body">
+                                                <div class="account-dropdown__item">
+                                                    <a href="{{ route('admin#list')}}">
+                                                    <i class="fa-solid fa-users"></i>  Admin List</a>
                                                 </div>
                                             </div>
                                             <div class="account-dropdown__body">

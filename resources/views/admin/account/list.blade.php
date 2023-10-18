@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 
-@section('title','Category List Page')
+@section('title','Admin List Page')
 
 @section('content')
  <div class="main-content">
@@ -11,12 +11,12 @@
                 <div class="table-data__tool">
                     <div class="table-data__tool-left">
                         <div class="overview-wrap">
-                            <h2 class="title-1">Category List</h2>
+                            <h2 class="title-1">Admin List</h2>
 
                         </div>
                     </div>
                     <div class="col-4">
-                        <form action="{{ route('category#list')}}" method="GET" class="d-flex">
+                        <form action="{{ route('admin#list')}}" method="GET" class="d-flex">
                             <input type="text" name="key" class="form-control" placeholder="Search ..." value="{{ request('key')}}">
                             <button class="btn bg-dark text-white" type="submit">
                                 <i class="fa-solid fa-magnifying-glass" ></i>
@@ -26,7 +26,7 @@
                     <div class="table-data__tool-right">
                         <a href="{{ route('category#createPage')}}">
                             <button class="au-btn au-btn-icon au-btn--green au-btn--small">
-                                <i class="zmdi zmdi-plus"></i>add category
+                                <i class="zmdi zmdi-plus"></i>add admin
                             </button>
                         </a>
                         <button class="au-btn au-btn-icon au-btn--green au-btn--small">
@@ -36,7 +36,7 @@
                 </div>
                 <div class="row my-3" style="font-size: 18px;font-weight:800">
                     <div class="col-4 text-left">
-                        Total : <span class="text-success">{{ $categories->total()}}</span>
+                        Total : <span class="text-success"></span>
                     </div>
                     <div class="col-4 offset-4 text-right">
                         Search Key : <span class="text-danger">{{ request('key')}}</span>
@@ -76,35 +76,53 @@
                 @endif
 
 
-                @if(count($categories) != 0)
                 <div class="table-responsive table-responsive-data2">
                     <table class="table table-data2">
                         <thead>
                             <tr class="row  text-left">
-                                <th class="col-2">ID</th>
-                                <th class="col-4">Category Name</th>
-                                <th class="col-3">Category Date</th>
+                                <th class="col-2">Image</th>
+                                <th class="col-2"> Name</th>
+                                <th class="col-3">Email</th>
+                                <th class="col-2">Gender</th>
                                 <th class="col-3"></th>
                             </tr>
                         </thead>
                         <tbody>
-                           @foreach ($categories as $category)
+                           @foreach ($admins as $admin)
                             <tr class="tr-shadow row">
-                                <td class="col-2">{{ $category->id}}</td>
-                                <td class="col-4">{{ $category->name}}</td>
-                                <td class="col-3">{{ $category->created_at->format('d-M-Y')}}</td>
-                                <td class="col-3">
+                                <td class="col-2">
+                                    @if ($admin->image == null)
+                                    <div class="w-100" style="display: flex;justify-content:center;align-items:center;border:1px solid rgba(0,0,0,0.3);box-shadow:1px 1px 1px rgba(0,0,0,0.3)">
+                                        <img class="image w-100" src="{{ asset('image/default.jpg')}}" alt="" style="height:75px;">
+                                    </div>
+                                    @else
+                                    <div class="w-100" style="display: flex;justify-content:center;align-items:center;border:1px solid rgba(0,0,0,0.3);box-shadow:1px 1px 1px rgba(0,0,0,0.3)">
+                                        <img class="image w-100" src="{{ asset('storage/'.$admin->image)}}" alt="" style="height:75px;">
+                                    </div>
+                                    @endif
+
+                                </td>
+                                <td class="col-2">{{$admin->name}}</td>
+                                <td class="col-3">{{ $admin->email}}</td>
+                                <td class="col-2">{{ $admin->gender}}</td>
+                                <td class="col-2 offset-1">
                                     <div class="table-data-feature">
-                                        <a href="{{ route('category#edit',$category->id)}}" class="m-2">
-                                            <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
-                                                <i class="zmdi zmdi-edit"></i>
+                                        <a class="m-2" href="">
+                                            <button class="item" data-toggle="tooltip" data-placement="top" title="View">
+                                            <i class="zmdi zmdi-eye"></i>
                                             </button>
                                         </a>
-                                        <a class="m-2" href="{{route('category#delete',$category->id)}}">
+                                        @if (Auth::user()->id != $admin->id)
+                                        <a class="m-2" href="{{ route('admin#changeRolePage',$admin->id)}}">
+                                            <button class="item" data-toggle="tooltip" data-placement="top" title="Role">
+                                            <i class="fa-solid fa-screwdriver-wrench"></i>                                            </button>
+                                        </a>
+                                        <a class="m-2" href="{{ route('admin#delete',$admin->id)}}">
                                             <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
                                             <i class="zmdi zmdi-delete"></i>
                                             </button>
                                         </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -112,12 +130,10 @@
                         </tbody>
                     </table>
                     <div class="mt-3">
-                        {{ $categories->appends(request()->query())->links()}}
+                        {{ $admins->appends(request()->query())->links()}}
                     </div>
                 </div>
-                @else
-                <h4 class="text-center mt-4">There is no categories!</h4>
-                @endif
+
                 <!-- END DATA TABLE -->
             </div>
         </div>

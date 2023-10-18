@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('name');
             $table->longText('description');
             $table->string('image')->nullable();
-            $table->integer('price');
+            $table->string('price');
+            $table->string('waiting_time');
             $table->integer('view_count')->default(0);
             $table->timestamps();
         });

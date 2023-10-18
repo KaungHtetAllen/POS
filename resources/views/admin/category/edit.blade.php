@@ -14,6 +14,9 @@
             <div class="col-lg-6 offset-3">
                 <div class="card" style="border-radius: 20px">
                     <div class="card-body">
+                        <div class="" style="cursor: pointer">
+                            <i class="fa-solid fa-arrow-left" onclick="history.back()"></i>
+                        </div>
                         <div class="card-title">
                             <h3 class="text-center title-2">Edit Your Category</h3>
                         </div>

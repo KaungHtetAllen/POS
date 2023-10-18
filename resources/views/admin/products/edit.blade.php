@@ -8,7 +8,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-3 offset-8">
-                    <a href="{{ route('category#list')}}"><button class="btn bg-dark text-white my-3">List</button></a>
+                    <a href="{{ route('products#list')}}"><button class="btn bg-dark text-white my-3">List</button></a>
                 </div>
             </div>
             <div class="col-lg-10 offset-1">
@@ -21,21 +21,15 @@
                             <h3 class="text-center title-2">Account Info Edit Page</h3>
                         </div>
                         <hr class="bg-dark">
-                        <form action="{{ route('admin#update',Auth::user()->id)}}" class="mt-3" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('products#update')}}" class="mt-3" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="col-5 mr-3">
                                     <div class="image shadow-md my-2 form-group" style="display:flex;justify-content: center;align-item:center;">
-                                         @if (Auth::user()->image == null)
-                                         <div class="p-3 img-thumbnail" style="border-radius:10px;background-color:rgba(0,0,0,0.4)">
-                                            <img src="{{ asset('image/default.jpg')}}" alt="default_user" style="width:200px">
-                                         </div>
-                                        @else
-                                        <img src="{{ asset('storage/' . Auth::user()->image)}}" alt="{{ Auth::user()->id}}" />
-                                        @endif
+                                        <img src="{{ asset('storage/' . $product->image)}}" alt="{{ $product->id}}" />
                                     </div>
                                     <div class="mt-3">
-                                        <input type="file" name="image" id="" class="form-control @error('image') is-invalid @enderror">
+                                        <input type="file" name="image" class="form-control @error('image') is-invalid @enderror">
                                         @error('image')
                                         <div class="invalid-feedback">
                                             {{ $message}}
@@ -46,10 +40,12 @@
                                         <button class="btn bg-dark text-white form-control">Update<i class="fa-solid fa-circle-right ml-2"></i></button>
                                     </div>
                                 </div>
+
                                 <div class="col-6">
                                     <div class="form-group">
+                                        <input type="hidden" name="productId" value="{{$product->id}}">
                                         <label for="cc-payment" class="control-label mb-1">Name</label>
-                                        <input id="cc-pament" name="name" type="text" class="form-control @error('name') is-invalid @enderror" aria-required="true" aria-invalid="false" placeholder="Enter Your Name..." value="{{ old('name',Auth::user()->name)}}">
+                                        <input id="cc-pament" name="name" type="text" class="form-control @error('name') is-invalid @enderror" aria-required="true" aria-invalid="false" placeholder="Enter Your Name..." value="{{ old('name',$product->name)}}">
                                         @error('name')
                                         <div class="invalid-feedback">
                                             {{ $message}}
@@ -57,49 +53,59 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label for="cc-payment" class="control-label mb-1">Email</label>
-                                        <input id="cc-pament" name="email" type="email" class="form-control @error('email') is-invalid @enderror" aria-required="true" aria-invalid="false" placeholder="Enter Your Email..."  value="{{ old('email',Auth::user()->email)}}">
-                                        @error('email')
-                                        <div class="invalid-feedback">
-                                            {{ $message}}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="cc-payment" class="control-label mb-1">Gender</label>
-                                        <select name="gender" class="form-control @error('gender') is-invalid @enderror">
-                                            <option value="">Choose Your Gender</option>
-                                            <option value="male" @if(Auth::user()->gender == 'male') selected @endif>Male</option>
-                                            <option value="female" @if(Auth::user()->gender == 'female') selected @endif>Female</option>
+                                        <label for="cc-payment" class="control-label mb-1">Category</label>
+                                        <select name="category" class="form-control @error('category') is-invalid @enderror">
+                                            <option value="">Choose Your Category ... </option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{$category->id}}" @if ($product->category_id == $category->id) selected @endif>{{$category->name}}</option>
+                                            @endforeach
                                         </select>
-                                        @error('gender')
+                                        @error('category')
                                         <div class="invalid-feedback">
                                             {{ $message}}
                                         </div>
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label for="cc-payment" class="control-label mb-1">Phone</label>
-                                        <input id="cc-pament" name="phone" type="number" class="form-control @error('phone') is-invalid @enderror" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone..." value="{{ old('phone',Auth::user()->phone)}}">
-                                        @error('phone')
+                                        <label for="cc-payment" class="control-label mb-1">Description</label>
+                                        <textarea name="description" cols="30" rows="2" class="form-control @error('description') is-invalid @enderror" value="" aria-required="true" aria-invalid="false" placeholder="Enter Your Description..." >{{ old('description',$product->description)}}</textarea>
+                                        @error('description')
                                         <div class="invalid-feedback">
                                             {{ $message}}
                                         </div>
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label for="cc-payment" class="control-label mb-1">Address</label>
-                                        <input id="cc-pament" name="address" type="text" class="form-control @error('address') is-invalid @enderror" aria-required="true" aria-invalid="false" placeholder="Enter Your address..." value="{{ old('address',Auth::user()->address)}}">
-                                        @error('address')
+                                        <label for="cc-payment" class="control-label mb-1">Price</label>
+                                       <input type="text" name="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price',$product->price)}}" aria-required="true" aria-invalid="false" placeholder="Enter Price..." >
+                                        @error('price')
                                         <div class="invalid-feedback">
                                             {{ $message}}
                                         </div>
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label for="cc-payment" class="control-label mb-1">Role</label>
-                                        <input id="cc-pament" name="role" type="text" class="form-control @error('role') is-invalid @enderror" aria-required="true" aria-invalid="false"  value="{{ old('role',Auth::user()->role)}}" disabled >
-                                        @error('role')
+                                        <label for="cc-payment" class="control-label mb-1">Waiting Time</label>
+                                        <input id="cc-pament" name="waitingTime" type="text" class="form-control @error('waitingTime') is-invalid @enderror" aria-required="true" aria-invalid="false" placeholder="Enter Your waitingTime..." value="{{ old('waitingTime',$product->waiting_time)}}">
+                                        @error('waitingTime')
+                                        <div class="invalid-feedback">
+                                            {{ $message}}
+                                        </div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cc-payment" class="control-label mb-1">View Count</label>
+                                        <input id="cc-pament" name="viewCount" type="text" class="form-control @error('viewCount') is-invalid @enderror" aria-required="true" aria-invalid="false"  value="{{ old('viewCount',$product->view_count)}}" disabled >
+                                        @error('viewCount')
+                                        <div class="invalid-feedback">
+                                            {{ $message}}
+                                        </div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cc-payment" class="control-label mb-1">Created Date</label>
+                                        <input id="cc-pament" name="createDate" type="text" class="form-control @error('createDate') is-invalid @enderror" aria-required="true" aria-invalid="false"  value="{{ old('createDate',$product->created_at->format('d-M-Y'))}}" disabled >
+                                        @error('createDate')
                                         <div class="invalid-feedback">
                                             {{ $message}}
                                         </div>
